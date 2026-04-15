@@ -1,0 +1,13 @@
+<template>
+    <lightning-card title="Todo App">
+    <lightning-input label="Enter task" onchange={handleOnchange} ></lightning-input>
+    <lightning-button label="Add task" onclick={handleAddTask}></lightning-button>
+    
+    <lightning-card >
+        <template for:each={tasks} for:item="task">
+            <p key={task.id}>{task}</p>
+            <lightning-button key={task.id} label="Delete Task" onclick={handleDeleteTask}></lightning-button>
+        </template> 
+    </lightning-card>
+    </lightning-card>
+</template>

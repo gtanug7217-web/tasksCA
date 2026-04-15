@@ -1,0 +1,61 @@
+.containerCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerSplit {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.accountCenter {
+    width: 30%;
+}
+
+.accountLeft {
+    width: 40%;
+}
+
+.datatableSection {
+    width: 65%;
+}
+
+/* Highlight selected row */
+.selectedAccount {
+    background-color: #d8e6fe;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+
+.accountRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* Selected row ko bhi same flex layout do */
+.selectedAccount {
+    display: flex; /* IMPORTANT */
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d8e6fe;
+    padding: 8px;
+    border-radius: 6px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.accountRow a {
+    font-weight: 500;
+}
+
+.accountRow lightning-button {
+    margin-left: 10px;
+}

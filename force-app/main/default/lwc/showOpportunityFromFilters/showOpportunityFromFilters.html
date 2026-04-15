@@ -1,0 +1,47 @@
+<template>
+    <lightning-card>
+
+        <p class="slds-align_absolute-center slds-text-heading_large slds-text-title_bold">
+            Opportunities
+        </p>
+
+        <div class="slds-m-around_small">
+
+            <!-- DATA TABLE -->
+            <div class="table-wrapper">
+    <lightning-datatable
+        data={displayData}
+        columns={columnsOpportunity}
+        key-field="Id"
+        onsave={handleSaveEditOpp}
+        draft-values={draftValuesOpportunity}
+        onrowaction={handleRowAction}
+        hide-checkbox-column>
+    </lightning-datatable>
+</div>
+
+            <!-- PAGINATION -->
+            <div class="slds-align_absolute-center slds-m-top_medium">
+
+                <lightning-button 
+                    label="Previous" 
+                    onclick={handlePrevious}
+                    disabled={isFirstPage}>
+                </lightning-button>
+
+                <p class="slds-m-horizontal_medium">
+                    Page {currentPage} of {totalPages}
+                </p>
+
+                <lightning-button 
+                    label="Next"
+                    onclick={handleNext}
+                    disabled={isLastPage}>
+                </lightning-button>
+
+            </div>
+
+        </div>
+
+    </lightning-card>
+</template>

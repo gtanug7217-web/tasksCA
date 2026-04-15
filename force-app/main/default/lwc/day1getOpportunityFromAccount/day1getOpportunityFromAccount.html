@@ -1,0 +1,47 @@
+<template>
+    <div class={containerClass}>
+        
+        <!-- LEFT: Accounts -->
+        <div class={accountSectionClass}>
+            <lightning-card title="Accounts">
+                <template for:each={Accounts} for:item="account">
+                    <div key={account.Id} 
+                         class={account.rowClass}>
+
+                        <a data-id={account.Id} 
+                           onclick={handleAccountNameClick}>
+                           {account.Name}
+                        </a>
+
+                        <lightning-button 
+                            label={account.toggleButtonLabel} 
+                            value={account.Id} 
+                            onclick={handleToggleButtonClick}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </lightning-card>
+        </div>
+        <!-- spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+        <!-- RIGHT: Datatable -->
+        <template if:true={showData}>
+            <div class="datatableSection">
+                <template if:true={hasOpportunity}>
+                    <lightning-datatable
+                        key-field="Id"
+                        data={Opportunity}
+                        columns={columnsOpportunites}
+                        hide-checkbox-column
+                        onsave={handleOpportunityChangeSave}
+                        draft-values={draftValues}
+                        onrowaction={handleRowAction}>
+                    </lightning-datatable>
+                </template>
+            </div>
+        </template>
+
+    </div>
+</template>

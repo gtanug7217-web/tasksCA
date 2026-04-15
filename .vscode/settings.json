@@ -1,0 +1,17 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.sf": true,
+    "**/.sfdx": true
+  },
+  "xml.preferences.showSchemaDocumentationType": "none",
+  "salesforce.einsteinForDevelopers.enable": true,
+  "salesforce.einsteinForDevelopers.enableAutocompletions": false,
+  "salesforce.einsteinForDevelopers.enableAutocompletionsByFileType": {
+    "apex": true,
+    "javascript": false,
+    "css": true,
+    "html": false
+  }
+}

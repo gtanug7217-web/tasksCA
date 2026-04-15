@@ -1,0 +1,9 @@
+<template>
+    <lightning-input type="search" placeholder="search currency types, values..." onchange={onChangeSearchHandler} class="slds-m-around_small"></lightning-input>
+    <lightning-datatable data={paginatedData} columns={columns} key-field="id" hide-checkbox-column></lightning-datatable>
+    <div class="slds-align_absolute-center">
+        <lightning-button label="Previous" onclick={handlePrevious} disabled={isPreviousDisabled} class="slds-m-around_x-small"></lightning-button>
+        <p>{currentPage} of {totalPages}</p>
+        <lightning-button label="Next" onclick={handleNext} disabled={isNextDisabled} class="slds-m-around_x-small"></lightning-button>
+    </div>
+</template>

@@ -1,0 +1,81 @@
+﻿<template>
+    <lightning-card>
+
+        <!-- HEADER -->
+        <div class="header-row">
+    <a onclick={handleAddFilter}>Add Filter</a>
+    <a onclick={handleRemoveAll}>Remove All</a>
+</div>
+
+        <!-- FILTER BOXES -->
+         <div class="filter-container">
+        <template for:each={boxes} for:item="box">
+            <div key={box.id} class="filter-box" data-id={box.id} onclick={handleClickFilterBox}>
+
+                <span class="filter-text">
+    <template if:true={box.field}>
+        {box.number}. {box.fieldLabel} {box.operator} {box.value}
+    </template>
+    <template if:false={box.field}>
+        {box.number}. New Filter*
+    </template>
+</span>
+
+                <lightning-icon
+                    icon-name="utility:delete"
+                    size="small"
+                    class="delete-icon"
+                    data-id={box.id}
+                    onclick={handleDeleteFilter}>
+                </lightning-icon>
+
+            </div>
+        </template>
+    </div>
+    </lightning-card>
+
+    <lightning-card class="slds-m-horizontal_small slds-p-horizontal_medium">
+        <div class="filter-logic-row">
+            <a onclick={addCustomFilterLogic}>Add Filter Logic</a>
+            <template if:true={logicExpression}>
+                <span class="logic-summary"><br>Logic: {logicExpression}</span>
+            </template>
+        </div>
+        <template if:true={showLogicEditor}>
+            <div class="slds-p-around_small">
+                <lightning-input
+                    label="Filter Logic"
+                    value={logicExpression}
+                    onchange={handleLogicChange}
+                    placeholder="Example: 1 AND 2 OR 3"
+                ></lightning-input>
+                
+                <div class="slds-m-top_small">
+                    <lightning-button variant="brand" label="Save Logic" onclick={handleSaveLogic}></lightning-button>
+                    <lightning-button variant="neutral" label="Cancel" class="slds-m-left_small" onclick={handleCancelLogic}></lightning-button>
+                </div>
+                
+            </div>
+        </template>
+    </lightning-card>
+    <!-- MODAL -->
+    <template if:true={showModal}>
+        <c-field-criteria-popup
+            field-options={fieldOptions}
+            operator-options={operatorOptions}
+            value-options={valueOptions}
+            selected-field={selectedField}
+            selected-operator={selectedOperator}
+            selected-value={selectedValue}
+            input-type={valueInputType}
+            is-picklist={showValueCombobox}
+            onfieldchange={handleFieldChange}
+            onsave={handleModalSave}
+            onclosemodal={handleCancel}>
+        </c-field-criteria-popup>
+    </template>
+
+</template>
+
+
+

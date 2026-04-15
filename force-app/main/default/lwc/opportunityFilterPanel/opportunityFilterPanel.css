@@ -1,0 +1,45 @@
+.filter-box {
+    position: relative;
+    padding: 20px 40px 20px 15px;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+    margin: 10px;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+
+/* TEXT */
+.filter-text {
+    font-size: 13px;
+    color: #444;
+}
+
+/* DELETE ICON */
+.delete-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* HOVER EFFECT */
+.filter-box:hover {
+    border-color: #1b96ff;
+    box-shadow: 0 0 5px rgba(27,150,255,0.3);
+}
+.filter-container {
+    padding: 5px;
+}
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    font-size: 13px;
+}
+.filter-logic-row{
+    padding: 0px 20px 10px 20px;
+}

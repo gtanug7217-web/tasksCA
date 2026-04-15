@@ -1,0 +1,41 @@
+<template>
+    <div class="top-bar">
+
+        <div class="left-section">
+            <c-navbar-toggle ontogglenav={handleToggleNav}></c-navbar-toggle>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-section">
+            <lightning-input 
+                type="search"
+                placeholder="Search by Name, Stage, Amount..."
+                onchange={handleSearch}>
+            </lightning-input>
+        </div>
+
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-container">
+
+        <!-- LEFT FILTER -->
+        <template if:true={isFilterPanelVisible}>
+            <div class="filter-panel">
+                <c-opportunity-filter-panel
+                    onfilterchange={handleFilterChange}>
+                </c-opportunity-filter-panel>
+            </div>
+        </template>
+
+        <!-- DATA -->
+        <div class={dataContainerClass}>
+            <c-show-opportunity-from-filters
+                filtered-data={filteredOpportunities}
+                onrefreshdata={handleRefresh}>
+            </c-show-opportunity-from-filters>
+        </div>
+
+    </div>
+
+</template>

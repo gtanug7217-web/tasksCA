@@ -1,0 +1,10 @@
+<template>
+    <lightning-modal-header label="Change Opportunity Date"></lightning-modal-header>
+    <lightning-modal-body>
+        <lightning-input label="Opportunity Close Date" type="date" value={closeDate} onchange={handleChange}></lightning-input>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+            <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+        </lightning-modal-footer>
+</template>

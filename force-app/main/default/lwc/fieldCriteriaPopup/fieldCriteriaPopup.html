@@ -1,0 +1,53 @@
+<template>
+    <div class="side-panel" role="dialog" aria-modal="true">
+        <div class="side-panel__header">
+            <h2 class="side-panel__title">Filter Criteria</h2>
+            <button class="side-panel__close" onclick={handleCancel} title="Close">×</button>
+        </div>
+
+        <div class="side-panel__body">
+
+            <!-- FIELD -->
+            <lightning-combobox
+                label="Field"
+                value={selectedField}
+                options={fieldOptions}
+                onchange={handleFieldChange}>
+            </lightning-combobox>
+
+            <!-- OPERATOR -->
+            <lightning-combobox
+                label="Operator"
+                value={selectedOperator}
+                options={operatorOptions}
+                onchange={handleOperatorChange}>
+            </lightning-combobox>
+
+            <!-- VALUE -->
+            <template if:true={isPicklist}>
+                <lightning-combobox
+                    label="Value"
+                    value={selectedValue}
+                    options={valueOptions}
+                    onchange={handleValueChange}>
+                </lightning-combobox>
+            </template>
+
+            <template if:false={isPicklist}>
+                <lightning-input
+                    label="Value"
+                    type={inputType}
+                    value={selectedValue}
+                    onchange={handleValueChange}>
+                </lightning-input>
+            </template>
+
+        </div>
+
+        <div class="side-panel__footer">
+            <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+            <lightning-button variant="brand" label="Save" onclick={handleSave}></lightning-button>
+        </div>
+
+    </div>
+</template>

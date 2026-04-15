@@ -1,0 +1,47 @@
+<template>
+    <div class="slds-grid slds-gutters">
+
+        <!-- Accounts -->
+        <div class={accountClass}>
+            <lightning-card title="Accounts">
+
+                <template for:each={Accounts} for:item="account">
+                    <div key={account.Id} class="account-row">
+
+                        <span class="account-name">
+                            {account.Name}
+                        </span>
+
+                        <lightning-button 
+                            label={account.icon}
+                            value={account.Id}
+                            onclick={handleClick}
+                            variant="brand-outline">
+                        </lightning-button>
+
+                    </div>
+                </template>
+
+            </lightning-card>
+        </div>
+
+        <!-- Opportunities -->
+        <template if:true={showDataTable}>
+            <div class="slds-col slds-size_2-of-3">
+                <lightning-card title="Opportunities">
+
+                    <lightning-datatable 
+                        data={opportunities}
+                        columns={columns}
+                        key-field="Id"
+                        draft-values={draftValues}
+                        onsave={handleSave}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+
+                </lightning-card>
+            </div>
+        </template>
+
+    </div>
+</template>

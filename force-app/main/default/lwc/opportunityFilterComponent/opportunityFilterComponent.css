@@ -1,0 +1,88 @@
+/* 🔥 FULL PAGE CONTROL */
+:host {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 🔝 TOP BAR */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 60px;
+}
+
+/* 🍔 LEFT */
+.left-section {
+    flex: 1;
+}
+
+/* 🔍 SEARCH */
+.search-section {
+    flex: 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+lightning-input {
+    width: 300px;
+}
+
+/* 🔥 MAIN LAYOUT */
+.main-container {
+    display: flex;
+    height: 80vh; /* top bar ke baad ka space */
+    overflow: hidden;
+}
+
+/* 📌 FILTER PANEL */
+.filter-panel {
+    width: 220px;
+    min-width: 220px;
+    height: 100%;
+    padding-top: 20px;
+}
+
+/* 📊 DATA PANEL */
+.data-panel {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* CENTER MODE */
+.data-panel.centered {
+    justify-content: center;
+    align-items: center;
+    padding:0px 60px;
+}
+
+/* SHIFT MODE */
+.data-panel.shifted {
+    padding: 20px;
+}
+
+/* 🔄 SMOOTH TRANSITION */
+.data-panel {
+    transition: all 0.3s ease;
+}
+
+
+/* 🔥 COMPACT TABLE (NO EXTRA SPACE) */
+:host ::deep .slds-table td,
+:host ::deep .slds-table th {
+    padding: 4px 8px;
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+/* ❌ REMOVE ANY SCROLL */
+html, body {
+    margin: 0;
+    overflow: hidden;
+}

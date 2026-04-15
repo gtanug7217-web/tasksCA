@@ -1,0 +1,136 @@
+//1.TRIGGER INITIATION
+//Create a trigger on Opportunity that detects when the Stage changes to Closed Won
+trigger OpportunityTrigger on Opportunity (after update) {
+    //list choosen because we can have multiple opportunities getting closed won at the same time
+    List<Id> oppIds = new List<Id>();
+    
+    for (Opportunity opp : Trigger.new) {
+        Opportunity oldOpp = Trigger.oldMap.get(opp.Id);
+        //checking the stage name is closed won or not
+        if (opp.StageName == 'Closed Won' && oldOpp.StageName != 'Closed Won') {
+            oppIds.add(opp.Id);
+        }
+    }
+    
+    if (!oppIds.isEmpty()) {
+        TanuAsyncApex.method(oppIds);
+    }
+}
+//changing description of the opportunity to 'Closed Won from trigger' when stage changes to closed won
+
+public class TanuAsyncApex {
+    @future
+    public static void method(List<Id> oppIds) {
+        //list is choosen we can have multiple opportunities getting closed won at the same time 
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+        
+        for (Id oppId : oppIds) {
+            Opportunity opp = [SELECT Id, Description from Opportunity WHERE Id =:oppId];
+            //changing the description from the trigger
+            opp.Description = 'Closed Won from trigger';
+            oppsToUpdate.add(opp);
+        }
+        
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+
+--------------------------------------------------------------------------------
+// 2. Contact Updates (Future Method): Retrieve all Contacts associated with the Opportunity using OpportunityContactRole. Update a field such as Description or a custom flag on these Contacts to indicate that they are linked to a Closed Won Opportunity. This operation must be handled asynchronously.
+        
+        // Retrieve all Contacts associated with the Opportunities
+        List<OpportunityContactRole> conRole = [SELECT ContactId FROM OpportunityContactRole WHERE OpportunityId IN :oppIds];
+        
+        Set<Id> conIds = new Set<Id>();
+        for (OpportunityContactRole role : conRole) {
+            conIds.add(role.ContactId);
+        }
+        
+        // Update the Contacts to indicate they are linked to a Closed Won Opportunity
+        List<Contact> conToUpdate = new List<Contact>();
+        for (Id contactId : conIds) {
+            Contact con = [SELECT Id, Description FROM Contact where Id =:contactId];
+            // Update the description or a custom flag on the Contact
+            con.Description = 'Linked to Closed Won Opportunity';
+            conToUpdate.add(con);
+        }    
+        if (!conToUpdate.isEmpty()) {
+            update conToUpdate;
+        }
+    }
+}
+--------------------------------------------------------------------------------
+//3. Opportunity Processing (Queueable Apex): Implement logic to evaluate the Opportunity Amount and categorize it. For example, mark it as 'High Value Deal' if the amount exceeds a threshold, otherwise mark it as 'Standard Deal'. Update the Opportunity accordingly. This logic should support chaining of further processing.
+public class OppPro implements Queueable {
+    private List<Id> oppIds;
+    //constructor for taking oppIds 
+    public OppPro(List<Id> oppIds) {
+        this.oppIds = oppIds;
+    }
+    public void execute(QueueableContext qc) {
+        List<Opportunity> oppsToUpdate = new List<Opportunity>();
+       
+        for (Id oppId : oppIds) {
+            Opportunity opp = [SELECT Id, Amount, Description FROM Opportunity WHERE Id =:oppId];
+            //taking the threshold amount as 100000 
+            if (opp.Amount > 100000) { 
+                opp.Description = 'High Value Deal';
+            } else {
+                opp.Description = 'Standard Deal';
+            }
+            oppsToUpdate.add(opp);
+        }
+        
+        if (!oppsToUpdate.isEmpty()) {
+            update oppsToUpdate;
+        }
+    }
+}
+// System.enqueueJob(new AnotherQueueableClass(oppIds));
+--------------------------------------------------------------------------------
+// 4. Task Processing (Batch Apex): Fetch all Tasks related to the Opportunity and update their Status (for example, set them to 'Completed'). The solution must be capable of handling a very large number of Task records efficiently.
+
+public class TaskPro implements Database.Batchable<SObject> {
+    private List<Id> oppIds;
+    
+    public TaskPro(List<Id> oppIds) {
+        this.oppIds = oppIds;
+    }
+    
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        //whatId used for non living
+        //quering tasks 
+        return Database.getQueryLocator([SELECT Id FROM Task WHERE WhatId IN :oppIds]);
+    }
+    public void execute(Database.BatchableContext context, List<Task> tasks) {
+        List<Task> tasksToUpdate = new List<Task>(); 
+        for (Task task : tasks) {
+            task.Status = 'Completed';
+            tasksToUpdate.add(task);
+        }
+        if (!tasksToUpdate.isEmpty()) {
+            update tasksToUpdate;
+        }
+    }
+    public void finish(Database.BatchableContext context) {
+       system.debug('finish method of batchable')
+    }
+}
+--------------------------------------------------------------------------------
+// 5. Scheduled Reprocessing (Scheduled Apex): Create a scheduled job that runs at a fixed time every day. This job should identify recently Closed Won Opportunities and reprocess them to ensure data consistency and to handle any missed updates from previous executions.
+
+public schPro implements Schedulable{
+    public void execute(SchedulableContext sc) {
+        //opportunity close date within 1 day
+        List<Opportunity> opps = [SELECT Id FROM Opportunity WHERE StageName = 'Closed Won' AND CloseDate = LAST_N_DAYS:1];
+        List<Id> oppIds = new List<Id>();
+        for(Opportunity opp : opps) {
+            oppIds.add(opp.Id);
+        }
+        if (!oppIds.isEmpty()) {
+            //chaining of queueable
+            System.enqueueJob(new OppPro(oppIds));
+        }
+    }
+}
+-------------------------------------------------------------------------------
