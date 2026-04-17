@@ -1,0 +1,76 @@
+<template>
+    <lightning-card title="Relation Matrix">
+
+        <template if:true={rows}>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">   
+                <thead>
+                    <tr>
+                        <th>Contact/User</th>
+                        <template for:each={users} for:item="user">
+                            <th key={user.id}>{user.name}</th>
+                        </template>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <template for:each={rows} for:item="row">
+                        <tr key={row.contact.id}>   
+                            <th>{row.contact.name}</th>
+                            <template for:each={row.cells} for:item="cell">
+                                <td key={cell.userId} class="slds-text-align_center">
+                                    
+                                    <template if:true={cell.imageUrl}>
+                                        <img src={cell.imageUrl} style="height:20px;width:20px;cursor:pointer;" data-id={cell.recordId} onclick={handleImageClick}/>
+                                    </template>
+                                </td>
+                            </template>
+
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-p-around_small">
+                Error loading data!!
+            </div>
+        </template>
+
+    </lightning-card>
+
+    <template if:true={showModal}>
+        <section role="dialog" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Edit Relation</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+
+                    <lightning-record-edit-form 
+                        object-api-name="Relation_Matrix__c"
+                        record-id={selectedRecordId}
+                        onsuccess={handleSuccess}>
+
+                        <lightning-input-field field-name="Account__c"></lightning-input-field>
+                        <lightning-input-field field-name="Contact__c"></lightning-input-field>
+                        <lightning-input-field field-name="User__c"></lightning-input-field>
+                        <lightning-input-field field-name="Health__c"></lightning-input-field>
+
+                        <div class="slds-m-top_medium">
+                            <lightning-button type="submit" label="Save" variant="brand"></lightning-button>
+                            <lightning-button label="Cancel" onclick={closeModal}></lightning-button>
+                        </div>
+
+                    </lightning-record-edit-form>
+
+                </div>
+
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
