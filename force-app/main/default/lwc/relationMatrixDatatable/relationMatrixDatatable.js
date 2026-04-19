@@ -1,6 +1,7 @@
 import { LightningElement, wire, api } from 'lwc';
-import getRelationMatrix from '@salesforce/apex/relationMatrixDatatable.relationMatrix';
+import getRelationMatrix from '@salesforce/apex/RelationMatrixDatatable.relationMatrix';
 import { refreshApex } from '@salesforce/apex';
+//importing static resource images
 import tickImage from '@salesforce/resourceUrl/tickImg';
 import crossImage from '@salesforce/resourceUrl/crossImage';
 import hypenImage from '@salesforce/resourceUrl/HypenImg';
@@ -11,16 +12,15 @@ export default class RelationMatrixDatatable extends LightningElement {
     rows;
     users;
     error;
-
     showModal = false;
     selectedRecordId;
-
+    isLoading = false;
     wiredResult;
 
+    //data fetching from apex class
     @wire(getRelationMatrix, { accountId: '$recordId' })
     wireResults(result) {
         this.wiredResult = result;
-
         const { error, data } = result;
 
         if (data) {
@@ -29,7 +29,6 @@ export default class RelationMatrixDatatable extends LightningElement {
             const relationMap = new Map();
 
             data.forEach(rec => {
-
                 if (rec.Contact__c && rec.Contact__r.Name) {
                     contactMap.set(rec.Contact__c, {
                         id: rec.Contact__c,
@@ -64,7 +63,7 @@ export default class RelationMatrixDatatable extends LightningElement {
                         recordId: relation?.Id,
                         imageUrl: relation
                             ? this.getHealthIconUrl(relation.Health__c)
-                            : undefined
+                            : null
                     };
                 })
             }));
@@ -78,25 +77,35 @@ export default class RelationMatrixDatatable extends LightningElement {
         }
     }
 
-  
+    
     handleImageClick(event) {
         const recId = event.target.dataset.id;
         if (!recId) return;
+
         this.selectedRecordId = recId;
         this.showModal = true;
+        this.isLoading = true;
     }
 
+    
+    handleLoad() {
+        this.isLoading = false;
+    }
+
+    
     closeModal() {
         this.showModal = false;
     }
 
+    
     handleSuccess() {
         this.showModal = false;
         refreshApex(this.wiredResult);
     }
 
+    
     getHealthIconUrl(health) {
-        const value = String(health || '').toLowerCase();
+        const value = String(health).toLowerCase();
 
         if (value.includes('good')) return tickImage;
         if (value.includes('bad')) return crossImage;

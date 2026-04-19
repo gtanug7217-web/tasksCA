@@ -1,4 +1,4 @@
-public class relationMatrixDatatable {
+public class RelationMatrixDatatable {
 
     @AuraEnabled(cacheable=true)
     public static List<Relation_Matrix__c> relationMatrix(Id accountId){
