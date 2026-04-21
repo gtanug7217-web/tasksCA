@@ -7,11 +7,11 @@ import NAME_FIELD     from "@salesforce/schema/Account.Name";
 import RATING_FIELD   from "@salesforce/schema/Account.Rating";
 import TYPE_FIELD     from '@salesforce/schema/Account.Type';
 import INDUSTRY_FIELD from "@salesforce/schema/Account.Industry";
+import cloudAnalogyImg from '@salesforce/resourceUrl/cloudAnalogyImg';
 
 const fields = [NAME_FIELD, TYPE_FIELD, RATING_FIELD, INDUSTRY_FIELD];
 
 const DARK_NAVY  = [26,  58, 92];
-const MID_NAVY   = [44,  82, 130];
 const SUB_NAVY   = [44,  82, 130];
 const LABEL_BG   = [247, 248, 250];
 const META_BG    = [240, 244, 248];
@@ -43,10 +43,10 @@ export default class GeneratePDFCmp extends LightningElement {
     @wire(getRecord, { recordId: '$recordId', fields })
     accountData({ data, error }) {
         if (data) {
-            this.accountName = getFieldValue(data, NAME_FIELD);
-            this.rating      = getFieldValue(data, RATING_FIELD);
-            this.type        = getFieldValue(data, TYPE_FIELD);
-            this.industry    = getFieldValue(data, INDUSTRY_FIELD);
+            this.accountName= getFieldValue(data, NAME_FIELD);
+            this.rating= getFieldValue(data, RATING_FIELD);
+            this.type= getFieldValue(data, TYPE_FIELD);
+            this.industry= getFieldValue(data, INDUSTRY_FIELD);
         } else if (error) {
             console.error('Account error:', JSON.stringify(error));
         }
@@ -61,7 +61,7 @@ export default class GeneratePDFCmp extends LightningElement {
         if (data) {
             this.contacts = data.records.map((r, i) => ({
                 index : i + 1,
-                Id    : r.fields.Id?.value    ?? '',
+                Id    : r.fields.Id?.value ?? '',
                 Name  : r.fields.Name?.value  ?? '',
                 Email : r.fields.Email?.value ?? '',
                 Phone : r.fields.Phone?.value ?? '',
@@ -80,8 +80,8 @@ export default class GeneratePDFCmp extends LightningElement {
         if (data) {
             this.opportunities = data.records.map((r, i) => ({
                 index     : i + 1,
-                Id        : r.fields.Id?.value        ?? '',
-                Name      : r.fields.Name?.value      ?? '',
+                Id        : r.fields.Id?.value ?? '',
+                Name      : r.fields.Name?.value ?? '',
                 StageName : r.fields.StageName?.value ?? '',
                 CloseDate : r.fields.CloseDate?.value ?? '',
             }));
@@ -119,16 +119,15 @@ export default class GeneratePDFCmp extends LightningElement {
         try {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-            const PW  = doc.internal.pageSize.getWidth();
-            const PH  = doc.internal.pageSize.getHeight();
-            const LM  = 36;
-            const RM  = 36;
-            const CW  = PW - LM - RM;
+            const PageWidth  = doc.internal.pageSize.getWidth();
+            const pageHeight  = doc.internal.pageSize.getHeight();
+            const leftMargin  = 36;
+            const rightMargin  = 36;
+            const contentWidth  = PageWidth - leftMargin - rightMargin;
             let   y   = 0;
 
-            /* ── helpers ── */
             const checkPage = (needed = 20) => {
-                if (y + needed > PH - 40) {
+                if (y + needed > pageHeight - 40) {
                     doc.addPage();
                     y = 36;
                 }
@@ -168,14 +167,14 @@ export default class GeneratePDFCmp extends LightningElement {
                 doc.line(lx, ly, lx, ly + lh);
             };
 
-            /* ── column layout (same for account, contacts, opps) ── */
+            
             const ROW_H = 20;
-            const c1 = LM,            w1 = CW * 0.18;
-            const c2 = LM + w1,       w2 = CW * 0.32;
-            const c3 = LM + w1 + w2,  w3 = CW * 0.18;
-            const c4 = c3 + w3,       w4 = CW - w1 - w2 - w3;
+            const c1 = leftMargin,            w1 = contentWidth * 0.18;
+            const c2 = leftMargin + w1,       w2 = contentWidth * 0.32;
+            const c3 = leftMargin + w1 + w2,  w3 = contentWidth * 0.18;
+            const c4 = c3 + w3,       w4 = contentWidth - w1 - w2 - w3;
 
-            /* draws a 4-col label|value|label|value row */
+           
             const drawInfoRow = (label1, val1, label2, val2) => {
                 checkPage(ROW_H);
                 const ry = y;
@@ -186,73 +185,72 @@ export default class GeneratePDFCmp extends LightningElement {
                 vLine(c2, ry, ROW_H);
                 vLine(c3, ry, ROW_H);
                 vLine(c4, ry, ROW_H);
-                hLine(LM, ry + ROW_H, CW, [232, 232, 232]);
+                hLine(leftMargin, ry + ROW_H, contentWidth, [232, 232, 232]);
                 y += ROW_H;
             };
 
-            /* draws a full-width label|value row (spans cols 2-4) */
             const drawInfoRowWide = (label, val) => {
                 checkPage(ROW_H);
                 const ry = y;
                 drawCell(c1, ry, w1, ROW_H, label, { bg: LABEL_BG, textColor: TEXT_MID, fontStyle: 'bold', fontSize: 8 });
                 drawCell(c2, ry, w2 + w3 + w4, ROW_H, val, { fontSize: 8 });
                 vLine(c2, ry, ROW_H);
-                hLine(LM, ry + ROW_H, CW, [232, 232, 232]);
+                hLine(leftMargin, ry + ROW_H, contentWidth, [232, 232, 232]);
                 y += ROW_H;
             };
 
-            /* ── section bar (dark navy full-width) ── */
             const drawSectionBar = (title) => {
                 checkPage(18);
                 const BAR_H = 18;
-                fillRect(LM, y, CW, BAR_H, DARK_NAVY);
+                fillRect(leftMargin, y, contentWidth, BAR_H, DARK_NAVY);
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8.5);
                 doc.setTextColor(...TEXT_WHITE);
-                doc.text(title.toUpperCase(), LM + 10, y + BAR_H / 2 + 3.5);
+                doc.text(title.toUpperCase(), leftMargin + 10, y + BAR_H / 2 + 3.5);
                 y += BAR_H;
             };
 
-            /* ── sub-header bar (mid navy, for each card) ── */
+            
             const drawSubBar = (title) => {
                 checkPage(16);
                 const BAR_H = 16;
-                fillRect(LM, y, CW, BAR_H, SUB_NAVY);
+                fillRect(leftMargin, y, contentWidth, BAR_H, SUB_NAVY);
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8);
                 doc.setTextColor(...TEXT_LIGHT);
-                doc.text(title, LM + 10, y + BAR_H / 2 + 3);
+                doc.text(title, leftMargin + 10, y + BAR_H / 2 + 3);
                 y += BAR_H;
             };
 
-            /* ══════════════════════════════════════
-               REPORT HEADER
-            ══════════════════════════════════════ */
             const HDR_H = 52;
-            fillRect(LM, 28, CW, HDR_H, DARK_NAVY);
-            fillRect(LM + 10, 38, 30, 30, WHITE);
+            fillRect(leftMargin, 28, contentWidth, HDR_H, DARK_NAVY);
+            if(cloudAnalogyImg)
+            {
+            const img = new Image();
+            img.src = cloudAnalogyImg;
+            doc.addImage(img, 'JPEG', leftMargin + 10, 38, 30, 30);
+            }
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(13);
             doc.setTextColor(...TEXT_WHITE);
-            doc.text('Account Information Report', LM + 50, 52);
+            doc.text('Account Information Report', leftMargin + 50, 52);
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(8.5);
             doc.setTextColor(184, 212, 240);
-            doc.text('Salesforce CRM \u2014 System Generated', LM + 50, 65);
+            doc.text('Salesforce CrightMargin \u2014 System Generated', leftMargin + 50, 65);
             y = 28 + HDR_H;
 
-            /* ── meta bar ── */
             const META_H = 34;
-            fillRect(LM, y, CW, META_H, META_BG);
+            fillRect(leftMargin, y, contentWidth, META_H, META_BG);
             const metaItems = [
                 { label: 'Date of Report:', value: this.today },
                 { label: 'Record ID:',      value: this.recordId || '' },
                 { label: 'Report Type:',    value: 'Account APF Report' },
                 { label: 'Prepared By:',    value: 'Sales Team' },
             ];
-            const cellW = CW / 4;
+            const cellW = contentWidth / 4;
             metaItems.forEach((item, i) => {
-                const cx = LM + i * cellW;
+                const cx = leftMargin + i * cellW;
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(7.5);
                 doc.setTextColor(102, 102, 102);
@@ -263,30 +261,24 @@ export default class GeneratePDFCmp extends LightningElement {
                 doc.text(item.value, cx + 8, y + 23);
                 if (i < 3) vLine(cx + cellW, y, META_H, [204, 204, 204]);
             });
-            hLine(LM, y + META_H, CW, [204, 204, 204]);
+            hLine(leftMargin, y + META_H, contentWidth, [204, 204, 204]);
             y += META_H + 14;
 
-            /* ══════════════════════════════════════
-               SECTION 1 — ACCOUNT INFORMATION
-            ══════════════════════════════════════ */
             drawSectionBar('Account Information');
             drawInfoRow('Account Name', this.accountName || '', 'Type',   this.type   || '');
             drawInfoRow('Industry',     this.industry    || '', 'Rating', this.rating || '');
-            hLine(LM, y, CW, DARK_NAVY);
+            hLine(leftMargin, y, contentWidth, DARK_NAVY);
             y += 14;
 
-            /* ══════════════════════════════════════
-               SECTION 2 — RELATED CONTACTS
-            ══════════════════════════════════════ */
             drawSectionBar('Related Contacts');
 
             if (!this.contacts || this.contacts.length === 0) {
                 checkPage(20);
-                fillRect(LM, y, CW, 20, WHITE);
+                fillRect(leftMargin, y, contentWidth, 20, WHITE);
                 doc.setFont('helvetica', 'italic');
                 doc.setFontSize(8.5);
                 doc.setTextColor(136, 136, 136);
-                doc.text('No contacts found.', LM + 10, y + 13);
+                doc.text('No contacts found.', leftMargin + 10, y + 13);
                 y += 20;
             } else {
                 this.contacts.forEach(con => {
@@ -298,21 +290,18 @@ export default class GeneratePDFCmp extends LightningElement {
                 });
             }
 
-            hLine(LM, y, CW, DARK_NAVY);
+            hLine(leftMargin, y, contentWidth, DARK_NAVY);
             y += 14;
 
-            /* ══════════════════════════════════════
-               SECTION 3 — RELATED OPPORTUNITIES
-            ══════════════════════════════════════ */
             drawSectionBar('Related Opportunities');
 
             if (!this.opportunities || this.opportunities.length === 0) {
                 checkPage(20);
-                fillRect(LM, y, CW, 20, WHITE);
+                fillRect(leftMargin, y, contentWidth, 20, WHITE);
                 doc.setFont('helvetica', 'italic');
                 doc.setFontSize(8.5);
                 doc.setTextColor(136, 136, 136);
-                doc.text('No opportunities found.', LM + 10, y + 13);
+                doc.text('No opportunities found.', leftMargin + 10, y + 13);
                 y += 20;
             } else {
                 this.opportunities.forEach(opp => {
@@ -320,20 +309,19 @@ export default class GeneratePDFCmp extends LightningElement {
                     drawSubBar(`Opportunity #${opp.index}`);
                     drawInfoRow('Name',       opp.Name      || '', 'Stage', opp.StageName || '');
                     drawInfoRowWide('Close Date', opp.CloseDate || '');
-                    y += 4; // small gap between cards
+                    y += 4; 
                 });
             }
 
-            hLine(LM, y, CW, DARK_NAVY);
+            hLine(leftMargin, y, contentWidth, DARK_NAVY);
             y += 12;
 
-            /* ── footer note ── */
+            
             checkPage(20);
             doc.setFont('helvetica', 'italic');
             doc.setFontSize(7.5);
             doc.setTextColor(170, 170, 170);
-            doc.text('This is a system generated report', PW / 2, y + 10, { align: 'center' });
-
+            doc.text('This is a system generated report', PageWidth / 2, y + 10, { align: 'center' });
             doc.save('AccountInformation.pdf');
             this.handleGeneratePdfClick = false;
 

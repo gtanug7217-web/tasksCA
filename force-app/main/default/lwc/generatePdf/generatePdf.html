@@ -1,12 +1,12 @@
 <template>
-    <lightning-button label="Generate PDF" onclick={generatePDF}></lightning-button>
+    <lightning-button label="Generate PDF" variant="brand" onclick={generatePDF}></lightning-button>
 
     <template if:true={handleGeneratePdfClick}>
         <section role="dialog" tabindex="-1" aria-modal="true" aria-label="Account Information Report"
             class="slds-modal slds-fade-in-open">
             <div class="slds-modal__container" style="max-width:820px; width:92vw;">
 
-                <!-- HEADER -->
+                <!-- ── HEADER ── -->
                 <header class="slds-modal__header slds-theme_shade" style="background:#1a3a5c; border-radius:4px 4px 0 0; padding:12px 20px;">
                     <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
                         <div class="slds-grid slds-grid_vertical-align-center" style="gap:12px;">
@@ -27,7 +27,7 @@
                     </div>
                 </header>
 
-                <!-- META BAR -->
+                <!-- ── META ROW ── -->
                 <div class="slds-grid" style="background:#f0f4f8; border-bottom:1px solid #ccc;">
                     <div class="slds-col slds-size_1-of-4 slds-p-around_x-small" style="border-right:1px solid #ddd;">
                         <p class="slds-text-body_small" style="color:#666; margin:0;">Date of Report</p>
@@ -47,93 +47,90 @@
                     </div>
                 </div>
 
+                <!-- ── MODAL BODY ── -->
                 <div class="slds-modal__content slds-p-around_none" style="max-height:55vh; overflow-y:auto;">
 
-                    <!-- ACCOUNT INFORMATION -->
+                    <!-- Account Information -->
                     <div style="border-bottom:2px solid #1a3a5c;">
                         <div style="background:#1a3a5c; color:#fff; padding:7px 16px; font-size:12px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase;">
                             Account Information
                         </div>
-                        <table style="width:100%; border-collapse:collapse;">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:100%; border-collapse:collapse;">
                             <tbody>
                                 <tr>
-                                    <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Account Name</td>
-                                    <td style="width:32%; border-right:1px solid #e8e8e8; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{accountName}</td>
-                                    <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Type</td>
-                                    <td style="border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{type}</td>
+                                    <td style="background:#f7f8fa; color:#555; font-weight:600; width:18%; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Account Name</td>
+                                    <td style="width:32%; border-right:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{accountName}</td>
+                                    <td style="background:#f7f8fa; color:#555; font-weight:600; width:18%; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Type</td>
+                                    <td style="font-size:12px; padding:6px 14px;">{type}</td>
                                 </tr>
                                 <tr>
-                                    <td style="background:#f7f8fa; color:#555; font-weight:700; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Industry</td>
+                                    <td style="background:#f7f8fa; color:#555; font-weight:600; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Industry</td>
                                     <td style="border-right:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{industry}</td>
-                                    <td style="background:#f7f8fa; color:#555; font-weight:700; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Rating</td>
+                                    <td style="background:#f7f8fa; color:#555; font-weight:600; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Rating</td>
                                     <td style="font-size:12px; padding:6px 14px;">{rating}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- RELATED CONTACTS -->
+                    <!-- Related Contacts -->
                     <div style="border-bottom:2px solid #1a3a5c;">
                         <div style="background:#1a3a5c; color:#fff; padding:7px 16px; font-size:12px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase;">
                             Related Contacts
                         </div>
                         <template if:true={hasContacts}>
-                            <template for:each={contacts} for:item="con">
-                                <div key={con.Id} style="border-bottom:1px solid #dce3ec;">
-                                    <!-- Contact number sub-header -->
-                                    <div style="background:#2c5282; color:#b8d4f0; padding:4px 14px; font-size:11px; font-weight:700; letter-spacing:0.4px;">
-                                        Contact #{con.index}
-                                    </div>
-                                    <table style="width:100%; border-collapse:collapse;">
-                                        <tbody>
-                                            <tr>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Name</td>
-                                                <td style="width:32%; border-right:1px solid #e8e8e8; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{con.Name}</td>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Phone</td>
-                                                <td style="border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{con.Phone}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Email</td>
-                                                <td colspan="3" style="font-size:12px; padding:6px 14px;">{con.Email}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </template>
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped" style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                                <thead>
+                                    <tr>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700; width:40px; text-align:center;">#</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Name</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Email</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={contacts} for:item="con">
+                                        <tr key={con.Id}>
+                                            <td style="text-align:center; color:#888; font-size:11px; padding:6px 12px;">{con.index}</td>
+                                            <td style="font-size:12px; padding:6px 12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{con.Name}</td>
+                                            <td style="font-size:12px; padding:6px 12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{con.Email}</td>
+                                            <td style="font-size:12px; padding:6px 12px;">{con.Phone}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </template>
                         <template if:false={hasContacts}>
                             <p style="padding:12px 16px; color:#888; font-style:italic; font-size:12px; margin:0;">No contacts found.</p>
                         </template>
                     </div>
 
-                    <!-- RELATED OPPORTUNITIES -->
+                    <!-- Related Opportunities -->
                     <div style="border-bottom:2px solid #1a3a5c;">
                         <div style="background:#1a3a5c; color:#fff; padding:7px 16px; font-size:12px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase;">
                             Related Opportunities
                         </div>
                         <template if:true={hasOpportunities}>
-                            <template for:each={opportunities} for:item="opp">
-                                <div key={opp.Id} style="border-bottom:1px solid #dce3ec;">
-                                    <!-- Opportunity number sub-header -->
-                                    <div style="background:#2c5282; color:#b8d4f0; padding:4px 14px; font-size:11px; font-weight:700; letter-spacing:0.4px;">
-                                        Opportunity #{opp.index}
-                                    </div>
-                                    <table style="width:100%; border-collapse:collapse;">
-                                        <tbody>
-                                            <tr>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Name</td>
-                                                <td style="width:32%; border-right:1px solid #e8e8e8; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{opp.Name}</td>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; width:18%; border-right:1px solid #e0e0e0; border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">Stage</td>
-                                                <td style="border-bottom:1px solid #e8e8e8; font-size:12px; padding:6px 14px;">{opp.StageName}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="background:#f7f8fa; color:#555; font-weight:700; border-right:1px solid #e0e0e0; font-size:12px; padding:6px 14px;">Close Date</td>
-                                                <td colspan="3" style="font-size:12px; padding:6px 14px;">{opp.CloseDate}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </template>
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped" style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                                <thead>
+                                    <tr>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700; width:40px; text-align:center;">#</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Opportunity Name</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Stage</th>
+                                        <th style="background:#2c5282; color:#fff; padding:7px 12px; font-size:11px; font-weight:700;">Close Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={opportunities} for:item="opp">
+                                        <tr key={opp.Id}>
+                                            <td style="text-align:center; color:#888; font-size:11px; padding:6px 12px;">{opp.index}</td>
+                                            <td style="font-size:12px; padding:6px 12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{opp.Name}</td>
+                                            <td style="font-size:12px; padding:6px 12px;">{opp.StageName}</td>
+                                            <td style="font-size:12px; padding:6px 12px;">{opp.CloseDate}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </template>
                         <template if:false={hasOpportunities}>
                             <p style="padding:12px 16px; color:#888; font-style:italic; font-size:12px; margin:0;">No opportunities found.</p>
@@ -142,11 +139,12 @@
 
                 </div>
 
-                <!-- FOOTER NOTE -->
+                <!-- System Note -->
                 <div style="text-align:center; font-size:10px; color:#aaa; padding:6px; background:#fafafa; border-top:0.5px solid #eee; font-style:italic;">
                     This is a system generated report
                 </div>
 
+                <!-- ── FOOTER ── -->
                 <footer class="slds-modal__footer" style="background:#f0f4f8; border-top:1px solid #ccc; padding:10px 16px; display:flex; justify-content:flex-end; gap:8px;">
                     <lightning-button label="Cancel" onclick={handleModalCancel}></lightning-button>
                     <lightning-button label="Download PDF" variant="brand" onclick={handleDownloadPDF}></lightning-button>
