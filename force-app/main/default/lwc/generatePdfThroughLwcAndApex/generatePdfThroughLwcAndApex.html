@@ -1,0 +1,35 @@
+<template>
+    <lightning-card title="Save Account PDF" icon-name="doctype:pdf">
+        <div class="slds-p-around_medium">
+            <template if:true={isLoading}>
+                <lightning-spinner 
+                    alternative-text="Saving..." 
+                    size="small">
+                </lightning-spinner>
+                <p>PDF is generating...</p>
+            </template>
+
+            <template if:false={isLoading}>
+                <template if:true={isSuccess}>
+                    <div class="slds-text-color_success">
+                         PDF Saved successfully!!!
+                    </div>
+                </template>
+
+                <template if:false={isSuccess}>
+                    <p>Save Account Detail Pdf.</p>
+                    <lightning-button 
+                        label="Save PDF" 
+                        onclick={handleSavePDF}>
+                    </lightning-button>
+                </template>
+            </template>
+
+            <template if:true={errorMessage}>
+                <div class="slds-text-color_error">
+                    Error: {errorMessage}
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
